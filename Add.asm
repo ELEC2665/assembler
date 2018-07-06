@@ -7,7 +7,9 @@
 
 @2
 D=A
-@3
-D=D+A
+@ 3
+D = D + A; JEQ
 @0
 M=D
+0;JLE
+A = D+M
