@@ -1,3 +1,8 @@
+// nand2tetris Assembler
+// Dr Craig A. Evans
+// (c) University of Leeds 
+// July 2018
+
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
