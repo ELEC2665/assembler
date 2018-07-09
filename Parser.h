@@ -14,6 +14,7 @@ class Parser {
   bool hasMoreCommands();
   void advance();
   CommandType commandType();
+  std::string get_current_cmd();
   std::string symbol();
   std::string dest();
   std::string comp();
