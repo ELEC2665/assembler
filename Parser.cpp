@@ -6,7 +6,7 @@ Parser::Parser(std::string filename) {
   _n = 0;
 }
 
-bool Parser::hasMoreCommands() {
+bool Parser::has_more_commands() {
   char c = _input_file.peek();
   if (c == EOF) {
     return false;
@@ -18,7 +18,7 @@ bool Parser::hasMoreCommands() {
 void Parser::advance() {
   std::string next_line;
   // keep looking for command until at the end of the file
-  while (hasMoreCommands()) {
+  while (has_more_commands()) {
     // read next line in file
     std::getline(_input_file, next_line);
     // remove whitespace from next line (space and newlines)
@@ -34,7 +34,6 @@ void Parser::advance() {
     if (pos != std::string::npos) {
       // create substring from beginning of line to //
       next_line = next_line.substr(0, pos);
-      std::cout << "Line = " << next_line << " Length = " << next_line.length() << std::endl;
     }
     // now check the length of the substring to see if a command exists
     if (next_line.length() > 0) {
@@ -51,7 +50,7 @@ void Parser::advance() {
   // std::cout << "[" << _n << "] " << _current_command << std::endl;
 }
 
-CommandType Parser::commandType() {
+CommandType Parser::command_type() {
   // look for A-instruction and label
   std::size_t found_a = _current_command.find("@");
   std::size_t found_l = _current_command.find("(");

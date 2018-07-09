@@ -11,9 +11,9 @@ enum class CommandType { A, C, L };
 class Parser {
  public:
   Parser(std::string filename);
-  bool hasMoreCommands();
+  bool has_more_commands();
   void advance();
-  CommandType commandType();
+  CommandType command_type();
   std::string get_current_cmd();
   std::string symbol();
   std::string dest();
