@@ -11,6 +11,7 @@ int main(int argc, char const *argv[])
     //std::cout << "Assembling " << filename << "...\n";
     
     Parser parser(filename);
+    Code code;
 
     while ( parser.hasMoreCommands() ) {
         parser.advance();
@@ -25,10 +26,14 @@ int main(int argc, char const *argv[])
 
         }
         else if (cmd_type == CommandType::C) {
-          Code code;
-          std::string dest_code = code.dest(parser.dest());
-          std::string comp_code = code.comp(parser.comp());
-          std::string jump_code = code.jump(parser.jump());
+          std::string dest = parser.dest();
+          std::string comp = parser.comp();
+          std::string jump = parser.jump(); 
+          //std::cout << "D:" << dest << " C:" << comp << " J:" << jump << std::endl;
+
+          std::string dest_code = code.dest(dest);
+          std::string comp_code = code.comp(comp);
+          std::string jump_code = code.jump(jump);
           std::cout << "111" << comp_code << dest_code << jump_code << std::endl;
         }
 

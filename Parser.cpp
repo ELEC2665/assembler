@@ -17,7 +17,6 @@ bool Parser::hasMoreCommands() {
 
 void Parser::advance() {
   std::string next_line;
-  _n++;
 
   // keep looking for command until at the end of the file
   while (hasMoreCommands()) {
@@ -34,7 +33,14 @@ void Parser::advance() {
   }
   // TODO: does not work properly when file ends in blank line or comment
   _current_command = next_line;
-  //std::cout << "[" << _n << "] " << _current_command << std::endl;
+  _n++;
+
+  // remove whitespace from command
+  _current_command.erase(
+      std::remove(_current_command.begin(), _current_command.end(), ' '),
+      _current_command.end());
+
+  // std::cout << "[" << _n << "] " << _current_command << std::endl;
 }
 
 CommandType Parser::commandType() {
@@ -72,7 +78,6 @@ std::string Parser::symbol() {
 std::string Parser::dest() {
   // check for = which is needed for a destination
   std::size_t pos = _current_command.find('=');
-  //std::cout << "Current Cmd = " << _current_command << std::endl;
 
   std::string sym;
   // extract string to the left of =
@@ -80,7 +85,7 @@ std::string Parser::dest() {
     sym = _current_command.substr(0, pos);
   }
 
-  //std::cout << "Dest = " << sym << std::endl;
+  // std::cout << "Dest = " << sym << std::endl;
   return sym;
 }
 std::string Parser::comp() {
@@ -94,23 +99,21 @@ std::string Parser::comp() {
 
   std::string sym;
 
-  //std::cout << "Current Cmd = " << _current_command << std::endl;
-
   // contains = and ;
   if (pos1 != std::string::npos && pos2 != std::string::npos) {
-    sym = _current_command.substr(pos1 + 1, pos2-2);
+    sym = _current_command.substr(pos1 + 1, pos2 - 1);
   }
   // contains only =
   else if (pos1 != std::string::npos) {
-    sym = _current_command.substr(pos1 + 1, _current_command.length() - pos1 - 1);
+    // -2 at the end to remove the newline character at the end of the string
+    sym =
+        _current_command.substr(pos1 + 1, _current_command.length() - pos1 - 2);
   }
   // contains only ;
   else if (pos2 != std::string::npos) {
     sym = _current_command.substr(0, pos2);
   }
-
-  //std::cout << "Comp = " << sym << std::endl;
-
+  // std::cout << "Comp = " << sym << std::endl;
   return sym;
 }
 
@@ -121,17 +124,15 @@ std::string Parser::jump() {
 
   // check for = or a ;
   std::size_t pos1 = _current_command.find(';');
-
-  //std::cout << "Current Cmd = " << _current_command << std::endl;
-
   std::string sym;
 
   // contains ;
   if (pos1 != std::string::npos) {
-    sym = _current_command.substr(pos1 + 1, _current_command.length() - pos1 - 1);
+    // -2 at the end to remove the newline character at the end of the string
+    sym =
+        _current_command.substr(pos1 + 1, _current_command.length() - pos1 - 2);
   }
 
-  //std::cout << "Jump = " << sym << std::endl;
-
+  // std::cout << "Jump = " << sym << std::endl;
   return sym;
 }
