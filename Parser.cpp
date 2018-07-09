@@ -179,6 +179,3 @@ void Parser::first_pass(SymbolTable &sym_table) {
   }
 }
 
-std::string Parser::get_binary_code() {
-  
-}

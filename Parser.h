@@ -28,7 +28,6 @@ class Parser {
   std::string jump();
   void reset();
   void first_pass(SymbolTable &sym_table);
-  std::string get_binary_code();
 
  private:
     std::string _current_command;

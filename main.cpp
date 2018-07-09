@@ -1,6 +1,6 @@
 // nand2tetris Assembler
 // Dr Craig A. Evans
-// (c) University of Leeds 
+// (c) University of Leeds
 // July 2018
 
 #include <bitset>
@@ -14,21 +14,22 @@
 int main(int argc, char const *argv[]) {
   std::string filename = argv[1];
   std::cout << "Assembling " << filename << "...\n";
-  
+
   Parser parser(filename);
   Code code;
   SymbolTable sym_table;
+
+  // extract actual name (remove .asm)
+  std::size_t pos = filename.find('.');
+  std::string ofile_name = filename.substr(0, pos) + ".hack";
+  // std::cout << "Output file = " << ofile_name << std::endl;
+  std::ofstream ofile(ofile_name);
 
   // do a first-pass to generate symbol table
   parser.first_pass(sym_table);
 
   // Now do a second-pass of the code, so go back to beginning
   parser.reset();
-   // extract actual name (remove .asm)
-  std::size_t pos = filename.find('.');
-  std::string ofile_name = filename.substr(0, pos) + ".hack";
-  // std::cout << "Output file = " << ofile_name << std::endl;
-  std::ofstream ofile(ofile_name);
 
   // keep looping while there are more commands in the file
   while (parser.has_more_commands()) {
@@ -46,13 +47,14 @@ int main(int argc, char const *argv[]) {
         // check whether it is a number or a label
         bool has_only_digits =
             (sym.find_first_not_of("0123456789") == std::string::npos);
-        
+
         int val = 0;
         if (has_only_digits) {  // sym is a number
           // convert the string to a decimal integer
           val = std::stoi(sym, nullptr, 10);
         } else {  // if it is a label
-          // check if already in the table , add it if not (address starts at 16)
+          // check if already in the table , add it if not (address starts at
+          // 16)
           if (sym_table.contains(sym) == false) {
             sym_table.add_entry(sym);
           }
@@ -76,7 +78,7 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  //sym_table.print();
+  // sym_table.print();
   ofile.close();  // remember to close output file
   std::cout << "Done!\n";
 
