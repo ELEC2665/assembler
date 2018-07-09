@@ -147,30 +147,27 @@ std::string Parser::jump() {
   return sym;
 }
 
-// accessor method for current command
-std::string Parser::get_current_cmd() { return _current_command; }
-
 void Parser::reset() {
+  // go back to beginning of file stream
   _input_file.clear();
   _input_file.seekg(0);
 }
 
-void Parser::first_pass(SymbolTable &sym_table) {
+void Parser::generate_symbol_table(SymbolTable &sym_table) {
   int rom_address = 0;
   // first-pass of code - read symbols
   while (has_more_commands()) {
     // get the next command tyoe
     advance();
-    CommandType cmd_type = command_type();
-    // if an A or C instruction, it is a valid command so need to
-    // increments the ROM address for the instrictopn
-    if (cmd_type == CommandType::A || cmd_type == (CommandType::C)) {
+    // if an A or C instruction, need to increments the ROM address
+    if (is_a_or_c()) {
       rom_address++;
     }
     // if it is a (LABEL), it is not a command, so address isn't incremented
-    else if (cmd_type == CommandType::L) {
+    else  {
+      // extract the symbol...
       std::string sym = symbol();
-      // extract the symbol, see if it already exists in the table
+      // see if it already exists in the table
       if (sym_table.contains(sym) == false) {
         // if it doesn't, then add it in
         sym_table.add_entry(sym, rom_address);
@@ -179,3 +176,58 @@ void Parser::first_pass(SymbolTable &sym_table) {
   }
 }
 
+std::string Parser::get_code(SymbolTable &sym_table) {
+  std::string bin_string;
+  // check whether it is a valid command (i.e. not empty)
+  if (!_current_command.empty()) {
+    // check the type of command and process
+    CommandType cmd_type = command_type();
+
+    if (cmd_type == CommandType::A) {
+      // get the symbol of the A instruction
+      std::string sym = symbol();
+      // check whether it is a number or a label
+      bool has_only_digits =
+          (sym.find_first_not_of("0123456789") == std::string::npos);
+
+      int val = 0;
+      if (has_only_digits) {  // sym is a number
+        // convert the string to a decimal integer
+        val = std::stoi(sym, nullptr, 10);
+      } else {  // else must be a label
+        // check if already in the table , add it if not (address starts at
+        // 16)
+        if (sym_table.contains(sym) == false) {
+          sym_table.add_entry(sym);
+        }
+        // now get the numeric address
+        val = sym_table.get_address(sym);
+      }
+
+      // convert the decimal value into binary
+      bin_string = std::bitset<16>(val).to_string();
+    } else if (cmd_type == CommandType::C) {
+      // get the dest, compy and jump bits of a C-instruction
+      Code code;
+      std::string dest_code = code.dest(dest());
+      std::string comp_code = code.comp(comp());
+      std::string jump_code = code.jump(jump());
+      bin_string = "111" + comp_code + dest_code + jump_code;
+    }
+  }
+  return bin_string;
+}
+
+bool Parser::is_a_or_c() {
+  // first check to see if the current command isn't
+  // a blank line which can happen for comment only lines
+  if (_current_command.length() == 0) {
+    return false;
+  }
+  // then check whether it is an A or C instruction
+  if (command_type() == CommandType::L) {
+    return false;
+  } else {
+    return true;
+  }
+}
