@@ -1,6 +1,7 @@
 #include "Code.h"
 
 Code::Code() {
+  // these are all the binary codes for the commands
   _dest_dict[""] = "000";
   _dest_dict["M"] = "001";
   _dest_dict["D"] = "010";
@@ -51,7 +52,5 @@ Code::Code() {
 
 // TODO: should really check whether the mnemonic exists firsts and return an error message if it doesn't
 std::string Code::dest(std::string mnemonic) { return _dest_dict[mnemonic]; }
-
 std::string Code::comp(std::string mnemonic) { return _comp_dict[mnemonic]; }
-
 std::string Code::jump(std::string mnemonic) { return _jump_dict[mnemonic]; }

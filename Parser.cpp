@@ -3,9 +3,9 @@
 Parser::Parser(std::string filename) {
   // TODO: check for errors whiel opening file
   _input_file.open(filename);
-  _n = 0;
 }
 
+// check if it at the end of the file
 bool Parser::has_more_commands() {
   char c = _input_file.peek();
   if (c == EOF) {
@@ -15,6 +15,7 @@ bool Parser::has_more_commands() {
   }
 }
 
+// go to the next command in the file
 void Parser::advance() {
   std::string next_line;
   // keep looking for command until at the end of the file
@@ -29,9 +30,9 @@ void Parser::advance() {
     next_line.erase(std::remove(next_line.begin(), next_line.end(), '\r'),
                     next_line.end());
 
-    // check whether it contains a comment
+    // check whether the line contains a comment
     std::size_t pos = next_line.find("//");
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos) { // if it does,
       // create substring from beginning of line to //
       next_line = next_line.substr(0, pos);
     }
@@ -39,15 +40,12 @@ void Parser::advance() {
     if (next_line.length() > 0) {
       // if a valid command exists, update the current command and break
       _current_command = next_line;
-      _n++;
       break;
     } else {
       // if not a valid command, clear the current command to prevent previous value being used
       _current_command.clear();
     }
-    
   }  
-  // std::cout << "[" << _n << "] " << _current_command << std::endl;
 }
 
 CommandType Parser::command_type() {
@@ -64,10 +62,13 @@ CommandType Parser::command_type() {
     return CommandType::C;
   }
 }
+
+
 std::string Parser::symbol() {
   std::string sym;
   // A-instruction
   if (_current_command[0] == '@') {
+    // remove the @ symbol 
     sym = _current_command.substr(1, _current_command.length() - 1);
   }
 
@@ -77,6 +78,7 @@ std::string Parser::symbol() {
 
   // Label
   if (pos1 != std::string::npos && pos2 != std::string::npos) {
+    // extract the string inside the brackets ( and )
     sym = _current_command.substr(pos1 + 1, pos2 - pos1 - 1);
   }
 
@@ -86,13 +88,11 @@ std::string Parser::dest() {
   // 1. dest = comp ; jump
   // 2. dest = comp
   // 3. comp; jump
-
   // check for = which is needed for a destination
   std::size_t pos = _current_command.find('=');
-
   std::string sym;
-  // extract string to the left of =
   if (pos != std::string::npos) {
+    // extract string to the left of =
     sym = _current_command.substr(0, pos);
   }
 
@@ -103,11 +103,9 @@ std::string Parser::comp() {
   // 1. dest = comp ; jump
   // 2. dest = comp
   // 3. comp; jump
-
   // check for = or a ;
   std::size_t pos1 = _current_command.find('=');
   std::size_t pos2 = _current_command.find(';');
-
   std::string sym;
   // contains = and ;
   if (pos1 != std::string::npos && pos2 != std::string::npos) {
@@ -132,7 +130,6 @@ std::string Parser::jump() {
   // 1. dest = comp ; jump
   // 2. dest = comp
   // 3. comp; jump
-
   // check for ; to know if a jump command exists
   std::size_t pos1 = _current_command.find(';');
   std::string sym;
@@ -142,9 +139,9 @@ std::string Parser::jump() {
     sym =
         _current_command.substr(pos1 + 1, _current_command.length() - pos1 - 1);
   }
-
   // std::cout << "Jump = " << sym << std::endl;
   return sym;
 }
 
+// accessor method for current command
 std::string Parser::get_current_cmd() { return _current_command; }

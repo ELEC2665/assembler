@@ -23,7 +23,6 @@ class Parser {
  private:
     std::string _current_command;
     std::ifstream _input_file;
-    int _n;
 };
 
 #endif
