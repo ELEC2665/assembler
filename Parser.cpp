@@ -1,8 +1,15 @@
 #include "Parser.h"
 
 Parser::Parser(std::string filename) {
-  // TODO: check for errors whiel opening file
   _input_file.open(filename);
+  if (_input_file.is_open() == false) {
+    std::cerr << "Error! " << filename << " not opened!" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+
+}
+Parser::~Parser() {
+  _input_file.close();
 }
 
 // check if it at the end of the file
@@ -32,7 +39,7 @@ void Parser::advance() {
 
     // check whether the line contains a comment
     std::size_t pos = next_line.find("//");
-    if (pos != std::string::npos) { // if it does,
+    if (pos != std::string::npos) {  // if it does,
       // create substring from beginning of line to //
       next_line = next_line.substr(0, pos);
     }
@@ -42,10 +49,11 @@ void Parser::advance() {
       _current_command = next_line;
       break;
     } else {
-      // if not a valid command, clear the current command to prevent previous value being used
+      // if not a valid command, clear the current command to prevent previous
+      // value being used
       _current_command.clear();
     }
-  }  
+  }
 }
 
 CommandType Parser::command_type() {
@@ -63,12 +71,11 @@ CommandType Parser::command_type() {
   }
 }
 
-
 std::string Parser::symbol() {
   std::string sym;
   // A-instruction
   if (_current_command[0] == '@') {
-    // remove the @ symbol 
+    // remove the @ symbol
     sym = _current_command.substr(1, _current_command.length() - 1);
   }
 
@@ -76,7 +83,7 @@ std::string Parser::symbol() {
   std::size_t pos1 = _current_command.find('(');
   std::size_t pos2 = _current_command.find(')');
 
-  // Label
+  // (Label)
   if (pos1 != std::string::npos && pos2 != std::string::npos) {
     // extract the string inside the brackets ( and )
     sym = _current_command.substr(pos1 + 1, pos2 - pos1 - 1);
@@ -145,3 +152,8 @@ std::string Parser::jump() {
 
 // accessor method for current command
 std::string Parser::get_current_cmd() { return _current_command; }
+
+void Parser::reset() {
+  _input_file.clear();
+  _input_file.seekg(0);
+}

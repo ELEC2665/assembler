@@ -31,12 +31,12 @@ SymbolTable::SymbolTable() {
 
 // add an entry to the table, specifying the address
 void SymbolTable::add_entry(std::string symbol, int address) {
-  _sym_table.insert(std::pair<std::string,int>(symbol,address));
+  _sym_table.insert(std::pair<std::string, int>(symbol, address));
 }
 
 // overloaded method, adds entry and auto increments the RAM address
 void SymbolTable::add_entry(std::string symbol) {
-  _sym_table.insert(std::pair<std::string,int>(symbol,_next_address));
+  _sym_table.insert(std::pair<std::string, int>(symbol, _next_address));
   _next_address++;
 }
 
@@ -44,16 +44,22 @@ void SymbolTable::add_entry(std::string symbol) {
 bool SymbolTable::contains(std::string symbol) {
   if (_sym_table.count(symbol)) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
 
 // get the address for a particular symbol
 int SymbolTable::get_address(std::string symbol) {
-  std::map<std::string,int>::iterator it;
+  std::map<std::string, int>::iterator it;
   it = _sym_table.find(symbol);
   int address = it->second;
   return address;
+}
+
+// print the table
+void SymbolTable::print() {
+  for (std::map<std::string,int>::iterator it = _sym_table.begin();
+       it != _sym_table.end(); ++it)
+    std::cout << it->first << " => " << it->second << std::endl;
 }

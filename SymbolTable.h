@@ -12,6 +12,7 @@ class SymbolTable {
   void add_entry(std::string symbol);
   bool contains(std::string symbol);
   int get_address(std::string symbol);
+  void print();
 private:
   std::map<std::string,int> _sym_table;
   int _next_address;

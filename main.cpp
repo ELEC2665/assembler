@@ -9,23 +9,16 @@
 int main(int argc, char const *argv[]) {
   std::string filename = argv[1];
   std::cout << "Assembling " << filename << "...\n";
-
-  // extract actual name (remove .asm)
-  std::size_t pos = filename.find('.');
-  std::string ofile_name = filename.substr(0, pos) + ".hack";
-  // std::cout << "Output file = " << ofile_name << std::endl;
-  std::ofstream ofile(ofile_name);
-
-  Parser first_parser(filename);
+  Parser parser(filename);
   Code code;
   SymbolTable sym_table;
 
   int rom_address = 0;
   // first-pass of code - read symbols
-  while (first_parser.has_more_commands()) {
+  while (parser.has_more_commands()) {
     // get the next command tyoe
-    first_parser.advance();
-    CommandType cmd_type = first_parser.command_type();
+    parser.advance();
+    CommandType cmd_type = parser.command_type();
     // if an A or C instruction, it is a valid command so need to 
     // increments the ROM address for the instrictopn
     if (cmd_type == CommandType::A || cmd_type == (CommandType::C)) {
@@ -33,7 +26,7 @@ int main(int argc, char const *argv[]) {
     } 
     // if it is a (LABEL), it is not a command, so address isn't incremented
     else if (cmd_type == CommandType::L) {
-      std::string sym = first_parser.symbol();
+      std::string sym = parser.symbol();
       // extract the symbol, see if it already exists in the table
       if (sym_table.contains(sym) == false) {
         // if it doesn't, then add it in
@@ -42,8 +35,13 @@ int main(int argc, char const *argv[]) {
     }
   }
 
-  // Now do a second-pass of the code
-  Parser parser(filename);
+  // Now do a second-pass of the code, so go back to beginning
+  parser.reset();
+   // extract actual name (remove .asm)
+  std::size_t pos = filename.find('.');
+  std::string ofile_name = filename.substr(0, pos) + ".hack";
+  // std::cout << "Output file = " << ofile_name << std::endl;
+  std::ofstream ofile(ofile_name);
 
   // keep looping while there are more commands in the file
   while (parser.has_more_commands()) {
@@ -91,6 +89,7 @@ int main(int argc, char const *argv[]) {
     }
   }
 
+  //sym_table.print();
   ofile.close();  // remember to close output file
   std::cout << "Done!\n";
 
