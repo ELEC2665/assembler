@@ -14,31 +14,13 @@
 int main(int argc, char const *argv[]) {
   std::string filename = argv[1];
   std::cout << "Assembling " << filename << "...\n";
+  
   Parser parser(filename);
   Code code;
   SymbolTable sym_table;
 
-  int rom_address = 0;
-  // first-pass of code - read symbols
-  while (parser.has_more_commands()) {
-    // get the next command tyoe
-    parser.advance();
-    CommandType cmd_type = parser.command_type();
-    // if an A or C instruction, it is a valid command so need to 
-    // increments the ROM address for the instrictopn
-    if (cmd_type == CommandType::A || cmd_type == (CommandType::C)) {
-      rom_address++;
-    } 
-    // if it is a (LABEL), it is not a command, so address isn't incremented
-    else if (cmd_type == CommandType::L) {
-      std::string sym = parser.symbol();
-      // extract the symbol, see if it already exists in the table
-      if (sym_table.contains(sym) == false) {
-        // if it doesn't, then add it in
-        sym_table.add_entry(sym, rom_address);
-      }
-    }
-  }
+  // do a first-pass to generate symbol table
+  parser.first_pass(sym_table);
 
   // Now do a second-pass of the code, so go back to beginning
   parser.reset();

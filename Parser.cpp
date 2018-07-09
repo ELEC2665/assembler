@@ -6,11 +6,8 @@ Parser::Parser(std::string filename) {
     std::cerr << "Error! " << filename << " not opened!" << std::endl;
     exit(EXIT_FAILURE);
   }
-
 }
-Parser::~Parser() {
-  _input_file.close();
-}
+Parser::~Parser() { _input_file.close(); }
 
 // check if it at the end of the file
 bool Parser::has_more_commands() {
@@ -156,4 +153,32 @@ std::string Parser::get_current_cmd() { return _current_command; }
 void Parser::reset() {
   _input_file.clear();
   _input_file.seekg(0);
+}
+
+void Parser::first_pass(SymbolTable &sym_table) {
+  int rom_address = 0;
+  // first-pass of code - read symbols
+  while (has_more_commands()) {
+    // get the next command tyoe
+    advance();
+    CommandType cmd_type = command_type();
+    // if an A or C instruction, it is a valid command so need to
+    // increments the ROM address for the instrictopn
+    if (cmd_type == CommandType::A || cmd_type == (CommandType::C)) {
+      rom_address++;
+    }
+    // if it is a (LABEL), it is not a command, so address isn't incremented
+    else if (cmd_type == CommandType::L) {
+      std::string sym = symbol();
+      // extract the symbol, see if it already exists in the table
+      if (sym_table.contains(sym) == false) {
+        // if it doesn't, then add it in
+        sym_table.add_entry(sym, rom_address);
+      }
+    }
+  }
+}
+
+std::string Parser::get_binary_code() {
+  
 }

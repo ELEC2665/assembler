@@ -1,3 +1,8 @@
+// nand2tetris Assembler
+// Dr Craig A. Evans
+// (c) University of Leeds 
+// July 2018
+
 #ifndef PARSER_H
 #define PARSER_H
 
@@ -5,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include "SymbolTable.h"
 
 enum class CommandType { A, C, L };
 
@@ -21,10 +27,13 @@ class Parser {
   std::string comp();
   std::string jump();
   void reset();
+  void first_pass(SymbolTable &sym_table);
+  std::string get_binary_code();
 
  private:
     std::string _current_command;
     std::ifstream _input_file;
+
 };
 
 #endif
