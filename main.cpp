@@ -3,7 +3,6 @@
 // (c) University of Leeds
 // July 2018
 
-#include <bitset>
 #include <fstream>
 #include <iostream>
 #include <string>

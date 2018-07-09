@@ -6,7 +6,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
