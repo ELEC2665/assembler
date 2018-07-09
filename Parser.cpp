@@ -194,9 +194,8 @@ std::string Parser::get_code(SymbolTable &sym_table) {
       if (has_only_digits) {  // sym is a number
         // convert the string to a decimal integer
         val = std::stoi(sym, nullptr, 10);
-      } else {  // else must be a label
-        // check if already in the table , add it if not (address starts at
-        // 16)
+      } else {  // sym is a label
+        // check if already in the table , add it if not
         if (sym_table.contains(sym) == false) {
           sym_table.add_entry(sym);
         }

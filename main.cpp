@@ -45,5 +45,6 @@ int main(int argc, char const *argv[]) {
 std::string get_ofile_name(std::string filename) {
   // extract actual name (remove .asm)
   std::size_t pos = filename.find('.');
+  // and add the .hack extension
   return filename.substr(0, pos) + ".hack";
 }
