@@ -34,3 +34,5 @@
 # macOS crap
 
 *.DS_Store
+
+*.vscode
