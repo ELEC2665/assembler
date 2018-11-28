@@ -6,6 +6,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <algorithm>
+#include <bitset>
 #include <fstream>
 #include <iostream>
 #include <string>
